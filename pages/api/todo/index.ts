@@ -49,10 +49,14 @@ async function handleCreateTodoRequest(
   const { todo, isCompleted } = req.body
 
   const todoRef = doc(todosCollectionRef, uuidv4())
-  await setDoc(todoRef, {
-    todo,
-    isCompleted,
-    createdAt: new Date(),
-  })
-  res.status(200).send({ success: true })
+  try {
+    await setDoc(todoRef, {
+      todo,
+      isCompleted,
+      createdAt: new Date(),
+    })
+    res.status(200).send({ success: true })
+  } catch (error) {
+    res.status(400).send({ success: false })
+  }
 }
