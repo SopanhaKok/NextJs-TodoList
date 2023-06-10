@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { db } from '@/app/utils/firebase'
+import db from '../../../firebase'
 import { collection, getDocs, addDoc } from 'firebase/firestore'
+import { Todo } from '@/app/Type'
 import { v4 as uuidv4 } from 'uuid'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -22,23 +23,25 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handleGetTodoRequest(res: NextApiResponse) {
-  const todosCollection = collection(db, 'todos')
-  getDocs(todosCollection)
-    .then((response) => {
-      const todos = response.docs.map((doc) => {
-        const data = doc.data()
-        const timestamp = data.createdAt.toDate()
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: timestamp,
-        }
+  const todoRef = db.collection('todos')
+  const snapshot = await todoRef.get()
+  try {
+    const todos: Todo[] = []
+    snapshot.forEach((doc) => {
+      const data = doc.data()
+      const timestamp = data.createdAt.toDate()
+      todos.push({
+        id: data.id,
+        isCompleted: data.isCompleted,
+        todo: data.todo,
+        createdAt: timestamp,
       })
-      return res.status(200).send(todos)
     })
-    .catch((error) => {
-      return res.status(400).send(error)
-    })
+    return res.status(200).send({ success: true, todos })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).send({ success: false })
+  }
 }
 
 async function handleCreateTodoRequest(
@@ -46,10 +49,11 @@ async function handleCreateTodoRequest(
   res: NextApiResponse
 ) {
   const { todo, isCompleted } = req.body
-
+  const id = uuidv4()
   try {
-    await addDoc(collection(db, 'todo'), {
-      id: uuidv4(),
+    const todoRef = db.collection('todos').doc(id)
+    await todoRef.set({
+      id,
       todo,
       isCompleted,
       createdAt: new Date(),

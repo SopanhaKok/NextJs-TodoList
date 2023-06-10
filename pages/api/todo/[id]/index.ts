@@ -8,7 +8,7 @@ import {
   DocumentData,
 } from 'firebase/firestore'
 import { todosCollectionRef } from '@/app/utils/firestore.collection'
-import { db } from '@/app/utils/firebase'
+import db from '../../../../firebase'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req
@@ -39,13 +39,16 @@ async function handleCompletedTodoRequest(
   const { id } = req.query
   const { todo } = req.body
 
-  const todoRef = doc(db, 'todos', id as string)
-  await updateDoc(todoRef, {
-    todo: todo.todo,
-    isCompleted: !todo.isCompleted,
-  })
-    .then((response) => res.status(200).send({ success: true }))
-    .catch((error) => res.status(400).send({ success: false }))
+  const todoRef = db.collection('todos')
+  try {
+    await todoRef.doc(id as string).update({
+      todo: todo.todo,
+      isCompleted: !todo.isCompleted,
+    })
+    return res.status(200).send({ success: true })
+  } catch (error) {
+    return res.status(400).send({ success: false })
+  }
 }
 
 async function handleUpdateTodoRequest(
@@ -55,13 +58,16 @@ async function handleUpdateTodoRequest(
   const { id } = req.query
   const { todo, isCompleted, createdAt } = req.body
 
-  const todoRef = doc(db, 'todos', id as string)
-  await updateDoc(todoRef, {
-    todo,
-    isCompleted,
-  })
-    .then((response) => res.status(200).send({ success: true }))
-    .catch((error) => res.status(400).send(error))
+  const todoRef = db.collection('todos')
+  try {
+    await todoRef.doc(id as string).update({
+      todo,
+      isCompleted,
+    })
+    return res.status(200).send({ success: true })
+  } catch (error) {
+    return res.status(400).send({ success: false })
+  }
 }
 
 async function handleDeleteTodoRequest(
@@ -69,9 +75,9 @@ async function handleDeleteTodoRequest(
   res: NextApiResponse
 ) {
   const { id } = req.query
-  const todoRef = doc(todosCollectionRef, id as string)
+  const todoRef = db.collection('todos')
   try {
-    await deleteDoc(todoRef)
+    await todoRef.doc(id as string).delete()
     return res.status(200).send({ success: true })
   } catch (error) {
     return res.status(400).send({ success: false })

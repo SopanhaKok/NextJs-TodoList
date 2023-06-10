@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { deleteDoc, getDocs } from 'firebase/firestore'
 import { todosCollectionRef } from '@/app/utils/firestore.collection'
+import db from '../../../../firebase'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req
@@ -17,10 +18,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function handleClearTodosRequest(res: NextApiResponse) {
-  const querySnapshot = await getDocs(todosCollectionRef)
-  querySnapshot.forEach(async (doc) => {
-    await deleteDoc(doc.ref)
-  })
-
-  return res.status(200).send({ success: true })
+  const todoRef = db.collection('todos')
+  const snapshot = await todoRef.get()
+  try {
+    snapshot.forEach(async (doc) => {
+      await doc.ref.delete()
+    })
+    return res.status(200).send({ success: true })
+  } catch (error) {
+    return res.status(400).send({ success: false })
+  }
 }
