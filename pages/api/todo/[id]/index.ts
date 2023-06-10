@@ -28,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break
     default:
       res.setHeader('Allow', ['POST', 'PUT', 'DELETE'])
-      res.status(405).end(`Method ${method} Not Allowed`)
+      return res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 
@@ -70,7 +70,10 @@ async function handleDeleteTodoRequest(
 ) {
   const { id } = req.query
   const todoRef = doc(todosCollectionRef, id as string)
-  await deleteDoc(todoRef)
-
-  res.status(200).send({ success: true })
+  try {
+    await deleteDoc(todoRef)
+    return res.status(200).send({ success: true })
+  } catch (error) {
+    return res.status(400).send({ success: false })
+  }
 }
