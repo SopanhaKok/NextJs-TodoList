@@ -35,6 +35,10 @@ export default function Home() {
           createdAt: doc.data().createdAt.toDate(), // Convert Firebase Timestamp to Date
         }))
 
+        updatedTodos.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        )
+
         setTodos(updatedTodos)
         setLoading(false)
       }
@@ -96,11 +100,8 @@ export default function Home() {
     e.preventDefault()
     if (isEdit && currentTodoId) {
       editTodo(currentTodoId, todo)
-      setIsEdit(false)
-      setTodo('')
     } else {
       addTodo(e)
-      setTodo('')
     }
   }
 
@@ -126,6 +127,8 @@ export default function Home() {
 
     if (status === 200) {
       setTodos(newTodos)
+      setTodo('')
+      setIsEdit(false)
     }
   }
 

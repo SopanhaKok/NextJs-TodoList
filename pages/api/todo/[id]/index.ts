@@ -13,7 +13,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       handleUpdateTodoRequest(req, res)
       break
     case 'DELETE':
-      console.log('dasdas')
       // Delete Todo
       handleDeleteTodoRequest(req, res)
       break
@@ -47,7 +46,7 @@ async function handleUpdateTodoRequest(
   res: NextApiResponse
 ) {
   const { id } = req.query
-  const { todo, isCompleted, createdAt } = req.body
+  const { todo, isCompleted } = req.body
 
   const todoRef = db.collection('todos')
   try {
