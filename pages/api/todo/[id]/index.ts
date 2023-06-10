@@ -1,13 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import {
-  doc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  QuerySnapshot,
-  DocumentData,
-} from 'firebase/firestore'
-import { todosCollectionRef } from '@/app/utils/firestore.collection'
 import db from '../../../../firebase'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -51,13 +42,16 @@ async function handleCompletedTodoRequest(
   }
 }
 
-function handleUpdateTodoRequest(req: NextApiRequest, res: NextApiResponse) {
+async function handleUpdateTodoRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query
   const { todo, isCompleted, createdAt } = req.body
 
   const todoRef = db.collection('todos')
   try {
-    todoRef.doc(id as string).update({
+    await todoRef.doc(id as string).update({
       todo,
       isCompleted,
     })

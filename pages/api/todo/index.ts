@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import db from '../../../firebase'
-import { collection, getDocs, addDoc } from 'firebase/firestore'
 import { Todo } from '@/app/Type'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -52,7 +51,7 @@ async function handleCreateTodoRequest(
   const id = uuidv4()
   try {
     const todoRef = db.collection('todos').doc(id)
-    todoRef.set({
+    await todoRef.set({
       id,
       todo,
       isCompleted,
