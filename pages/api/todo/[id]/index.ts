@@ -51,16 +51,13 @@ async function handleCompletedTodoRequest(
   }
 }
 
-async function handleUpdateTodoRequest(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+function handleUpdateTodoRequest(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
   const { todo, isCompleted, createdAt } = req.body
 
   const todoRef = db.collection('todos')
   try {
-    await todoRef.doc(id as string).update({
+    todoRef.doc(id as string).update({
       todo,
       isCompleted,
     })
@@ -70,14 +67,11 @@ async function handleUpdateTodoRequest(
   }
 }
 
-async function handleDeleteTodoRequest(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+function handleDeleteTodoRequest(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
   const todoRef = db.collection('todos')
   try {
-    await todoRef.doc(id as string).delete()
+    todoRef.doc(id as string).delete()
     return res.status(200).send({ success: true })
   } catch (error) {
     return res.status(400).send({ success: false })

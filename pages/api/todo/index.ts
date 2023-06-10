@@ -52,7 +52,7 @@ async function handleCreateTodoRequest(
   const id = uuidv4()
   try {
     const todoRef = db.collection('todos').doc(id)
-    await todoRef.set({
+    todoRef.set({
       id,
       todo,
       isCompleted,

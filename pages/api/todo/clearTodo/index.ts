@@ -22,7 +22,7 @@ async function handleClearTodosRequest(res: NextApiResponse) {
   const snapshot = await todoRef.get()
   try {
     snapshot.forEach(async (doc) => {
-      await doc.ref.delete()
+      doc.ref.delete()
     })
     return res.status(200).send({ success: true })
   } catch (error) {
