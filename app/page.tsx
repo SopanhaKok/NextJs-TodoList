@@ -67,7 +67,7 @@ export default function Home() {
 
     const { status } = await axios.post('/api/todo', newTodo)
     if (status === 200) {
-      setTodos([...todos, newTodo])
+      setTodos([newTodo, ...todos])
     }
     setTodo('')
   }
