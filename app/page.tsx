@@ -28,16 +28,14 @@ export default function Home() {
     const unsubcribe = onSnapshot(
       todosCollectionRef,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const updatedTodos: Todo[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          todo: doc.data().todo,
-          isCompleted: doc.data().isCompleted,
-          createdAt: doc.data().createdAt.toDate(), // Convert Firebase Timestamp to Date
-        }))
-
-        updatedTodos.sort(
-          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-        )
+        const updatedTodos: Todo[] = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            todo: doc.data().todo,
+            isCompleted: doc.data().isCompleted,
+            createdAt: doc.data().createdAt.toDate(), // Convert Firebase Timestamp to Date
+          }))
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
         setTodos(updatedTodos)
         setLoading(false)
