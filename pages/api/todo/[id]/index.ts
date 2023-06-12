@@ -60,11 +60,14 @@ async function handleUpdateTodoRequest(
   }
 }
 
-function handleDeleteTodoRequest(req: NextApiRequest, res: NextApiResponse) {
+async function handleDeleteTodoRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query
   const todoRef = db.collection('todos')
   try {
-    todoRef.doc(id as string).delete()
+    await todoRef.doc(id as string).delete()
     return res.status(200).send({ success: true })
   } catch (error) {
     return res.status(400).send({ success: false })
