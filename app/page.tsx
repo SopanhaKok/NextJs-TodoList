@@ -35,7 +35,7 @@ export default function Home() {
             isCompleted: doc.data().isCompleted,
             createdAt: doc.data().createdAt.toDate(),
           }))
-          .sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate())
+          .sort((a, b) => b.createdAt - a.createdAt)
 
         setTodos(updatedTodos)
         setLoading(false)
