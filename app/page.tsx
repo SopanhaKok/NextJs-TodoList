@@ -33,9 +33,9 @@ export default function Home() {
             id: doc.id,
             todo: doc.data().todo,
             isCompleted: doc.data().isCompleted,
-            createdAt: doc.data().createdAt.toDate(), // Convert Firebase Timestamp to Date
+            createdAt: doc.data().createdAt.toDate(),
           }))
-          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .sort((a, b) => b.createdAt.toDate() - a.createdAt.toDate())
 
         setTodos(updatedTodos)
         setLoading(false)
